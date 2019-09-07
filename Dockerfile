@@ -21,7 +21,7 @@ RUN CGO_ENABLED=0 ./mng.sh -b
 
 FROM scratch
 
-COPY --from=0 /go/src/github.com/github.com/sqsinformatique/backend /usr/bin/backend
+COPY --from=0 /go/src/github.com/sqsinformatique/backend/backend /usr/bin/backend
 
 USER 1000
 
