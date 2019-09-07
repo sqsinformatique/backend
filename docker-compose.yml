@@ -1,0 +1,33 @@
+version: '3.3'
+
+services:
+  # backend-migrate:
+  #   depends_on:
+  #   - postgresql
+  #   build: ./
+  #   image: sqs-informatique/backend
+  #   env_file:
+  #   - variables.env
+  #   command:
+  #     migrate
+  #   restart: on-failure
+
+  backend:
+    build: ./
+    # depends_on:
+    # - backend-migrate
+    image: sqs-informatique/backend
+    env_file:
+    - variables.env
+    command:
+      serve
+    ports:
+    - "9777:9777"
+    restart: on-failure
+    
+networks:
+  default:
+    external:
+      name: sqsnet
+
+
