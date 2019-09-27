@@ -41,32 +41,47 @@ func Start() (err error) {
 
 	router.HandleFunc("/health", healthGetHandler).Methods("GET")
 
-	router.HandleFunc("/api/models", modelsGetAllHandler).Methods("GET")
-	router.HandleFunc("/api/models", modelsPostHandler).Methods("POST")
-	router.HandleFunc("/api/models", modelsPutHandler).Methods("PUT")
-	router.HandleFunc("/api/models/{id}", modelsGetHandler).Methods("GET")
+	ref_type = router.GetRoute("/api/ref_type")
 
-	router.HandleFunc("/api/nodes", nodesGetAllHandler).Methods("GET")
-	router.HandleFunc("/api/nodes", nodesPostHandler).Methods("POST")
-	router.HandleFunc("/api/nodes/{id}", nodesGetHandler).Methods("GET")
+	ref_type.HandleFunc("/resource", ref_resourceGetAllHandler).Methods("GET")
+	ref_type.HandleFunc("/resource", ref_resourcePostHandler).Methods("POST")
+	ref_type.HandleFunc("/resource/{id}", ref_resourceDeleteHandler).Methods("DELETE")
+	ref_type.HandleFunc("/resource/{id}", ref_resourceGetHandler).Methods("GET")
 
-	router.HandleFunc("/api/elevators", elevatorsGetAllHandler).Methods("GET")
-	router.HandleFunc("/api/elevators", elevatorsPostHandler).Methods("POST")
-	router.HandleFunc("/api/elevators/{id}", elevatorsGetHandler).Methods("GET")
-	router.HandleFunc("/api/elevators/{id}/contractor", elevatorContractorGetHandler).Methods("GET")
-	router.HandleFunc("/api/elevators/{id}/works", elevatorWorksGetHandler).Methods("GET")
+	ref_type.HandleFunc("/objects", ref_objectsGetAllHandler).Methods("GET")
+	ref_type.HandleFunc("/objects", ref_objectsPostHandler).Methods("POST")
+	ref_type.HandleFunc("/objects/{id}", ref_objectsDeleteHandler).Methods("DELETE")
+	ref_type.HandleFunc("/objects/{id}", ref_objectsGetHandler).Methods("GET")
 
-	router.HandleFunc("/api/contractors", contractorsGetAllHandler).Methods("GET")
-	router.HandleFunc("/api/contractors", contractorsPostHandler).Methods("POST")
-	router.HandleFunc("/api/contractors/{id}", contractorsGetHandler).Methods("GET")
+	ref_type.HandleFunc("/status", ref_statusGetAllHandler).Methods("GET")
+	ref_type.HandleFunc("/status", ref_statusPostHandler).Methods("POST")
+	ref_type.HandleFunc("/status/{id}", ref_statusDeleteHandler).Methods("DELETE")
+	ref_type.HandleFunc("/status/{id}", statusGetHandler).Methods("GET")
 
-	router.HandleFunc("/api/worktype", worktypeGetAllHandler).Methods("GET")
-	router.HandleFunc("/api/worktype", worktypePostHandler).Methods("POST")
-	router.HandleFunc("/api/worktype/{id}", worktypeGetHandler).Methods("GET")
+	ref_type.HandleFunc("/maintenance", ref_maintenanceGetAllHandler).Methods("GET")
+	ref_type.HandleFunc("/maintenance", ref_maintenancePostHandler).Methods("POST")
+	ref_type.HandleFunc("/maintenance/{id}", ref_maintenanceDeleteHandler).Methods("DELETE")
+	ref_type.HandleFunc("/maintenance/{id}", ref_maintenanceGetHandler).Methods("GET")
 
-	router.HandleFunc("/api/works", worksPostHandler).Methods("POST")
+	router.HandleFunc("/api/supply_organizations", supply_organizationsGetAllHandler).Methods("GET")
+	router.HandleFunc("/api/supply_organizations", supply_organizationsPostHandler).Methods("POST")
+	router.HandleFunc("/api/supply_organizations/{id}", supply_organizationsDeleteHandler).Methods("DELETE")
+	router.HandleFunc("/api/supply_organizations/{id}", supply_organizationsGetHandler).Methods("GET")
 
-	router.HandleFunc("/api/predictions/{id}/{fileid}", predictionGetHandler).Methods("GET")
+	router.HandleFunc("/api/incidents", incidentsGetAllHandler).Methods("GET")
+	router.HandleFunc("/api/incidents/{supply_organizations_id}", incidentsPostHandler).Methods("POST")
+	router.HandleFunc("/api/incidents/{supply_organizations_id}/{object_id}", incidentsDeleteHandler).Methods("DELETE")
+	router.HandleFunc("/api/incidents/{supply_organizations_id}/{object_id}", incidentsGetHandler).Methods("GET")
+
+	router.HandleFunc("/api/objects", objectsGetAllHandler).Methods("GET")
+	router.HandleFunc("/api/objects/{supply_organizations_id}", objectsPostHandler).Methods("POST")
+	router.HandleFunc("/api/objects/{supply_organizations_id}/{object_id}", objectsDeleteHandler).Methods("DELETE")
+	router.HandleFunc("/api/objects/{supply_organizations_id}/{object_id}", objectsGetHandler).Methods("GET")
+
+	router.HandleFunc("/api/maintenance", maintenanceGetAllHandler).Methods("GET")
+	router.HandleFunc("/api/maintenance/{supply_organizations_id}", maintenancePostHandler).Methods("POST")
+	router.HandleFunc("/api/maintenance/{supply_organizations_id}/{object_id}", maintenanceDeleteHandler).Methods("DELETE")
+	router.HandleFunc("/api/maintenance/{supply_organizations_id}/{object_id}", maintenanceGetHandler).Methods("GET")
 
 	// Initialize our database connection
 	err = db.InitDB()
