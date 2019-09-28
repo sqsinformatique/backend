@@ -106,3 +106,47 @@ func incidentsDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	return
 }
+
+func incidentsPutHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	var jPostData db.IncidentsData
+	contents, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		utils.Errorf("Something wrong with the request body: %s", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+	err = json.Unmarshal(contents, &jPostData)
+	if err != nil {
+		utils.Errorf("Something wrong with the request body: %s", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = db.UpdateIncidents(id, jPostData.SupplyOrganization, jPostData.Object,
+		jPostData.Date, jPostData.Results, jPostData.ResponsibleWorker)
+	utils.Infoln("Insert InsertObjects ID", id)
+	if err != nil {
+		utils.Errorf("Can't UPDATE. Something wrong with the request body: %s", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	objects, err := db.GetIncidentsByID(id)
+	if err != nil {
+		utils.Errorf("Can't GET. Something wrong with the request body: %s", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	res, err := json.Marshal(objects)
+	if err != nil {
+		utils.Errorf("Can't marshaled request %s", err)
+	}
+	_, err = w.Write(res)
+	if err != nil {
+		utils.Errorf("Can't send error request %s", err)
+	}
+}

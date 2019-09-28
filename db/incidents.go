@@ -10,7 +10,7 @@ import (
 
 type IncidentsData struct {
 	ID                 int       `json:"id"`
-	SupplyOrganization string    `json:"supply_organization"`
+	SupplyOrganization int       `json:"supply_organization"`
 	Object             int       `json:"object"`
 	Date               time.Time `json:"date"`
 	Results            string    `json:"results"`
@@ -74,4 +74,13 @@ func AddIncidentsPartitionsBySupplyOrganization(supplyOrganization int) (err err
 	}
 
 	return tx.Commit()
+}
+
+func UpdateIncidents(id, supply_organization, object int, date time.Time, results, responsibleWorker string) (err error) {
+	_, err = rollbackQuery(`insert into public.incidents (supply_organization, object, date, results, responsible_worker) values ($1, $2, $3, $4, $5) where id=$6`,
+		supply_organization, object, date, results, responsibleWorker, id)
+	if err == sql.ErrNoRows {
+		return fmt.Errorf("Err insert model")
+	}
+	return
 }

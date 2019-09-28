@@ -72,6 +72,7 @@ func Start() (err error) {
 	router.HandleFunc("/api/supply_organizations", supply_organizationsPostHandler).Methods("POST")
 	router.HandleFunc("/api/supply_organizations/{id}", supply_organizationsDeleteHandler).Methods("DELETE")
 	router.HandleFunc("/api/supply_organizations/{id}", supply_organizationsGetHandler).Methods("GET")
+	router.HandleFunc("/api/supply_organizations/{id}", supply_organizationsPutHandler).Methods("PUT")
 
 	router.HandleFunc("/api/inventarization", inventarizationGetAllHandler).Methods("GET")
 	router.HandleFunc("/api/inventarization/{supply_organizations_id}", inventarizationPostHandler).Methods("POST")
@@ -88,6 +89,7 @@ func Start() (err error) {
 	router.HandleFunc("/api/objects/{supply_organizations_id}", objectsPostHandler).Methods("POST")
 	router.HandleFunc("/api/objects/{id}", objectsDeleteHandler).Methods("DELETE")
 	router.HandleFunc("/api/objects/{id}", objectsGetHandler).Methods("GET")
+	router.HandleFunc("/api/objects/{id}", objectsPutHandler).Methods("PUT")
 
 	router.HandleFunc("/api/maintenance/getall", maintenanceGetAllHandler).Methods("GET")
 	router.HandleFunc("/api/maintenance/{id}", maintenancePostHandler).Methods("POST")

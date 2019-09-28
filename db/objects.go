@@ -100,3 +100,13 @@ func AddObjectsPartitionsBySupplyOrganization(supplyOrganization int) (err error
 
 	return tx.Commit()
 }
+
+func UpdateObjects(id int, supplyOrganization int, coordinates json.RawMessage, objectType int, characteristics json.RawMessage,
+	address, description string, status int, maintenanceDate, lastRepairsDate time.Time) (err error) {
+	_, err = rollbackQuery(`insert into public.objects (supply_organization, coordinates, object_type, characteristics, address, description, status, maintenance_date, last_repairs_date) values ($1, $2, $3, $4, $5, $6, $7, $8, $9) where id=$10`,
+		supplyOrganization, coordinates, objectType, characteristics, address, description, status, maintenanceDate, lastRepairsDate, id)
+	if err == sql.ErrNoRows {
+		return fmt.Errorf("Err insert model")
+	}
+	return
+}

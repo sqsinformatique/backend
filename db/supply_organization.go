@@ -81,3 +81,12 @@ func GetAllSupplyOrganizationByType(typeOfResource int) (res []SupplyOrganizatio
 	}
 	return
 }
+
+func UpdateSupplyOrganization(id int, name string, typeOfResource int, description, contactTel, contactEmail, head string) (err error) {
+	_, err = rollbackQuery(`insert into public.supply_organization (name, type_of_resource, description, contact_tel, contact_email, head) values ($1, $2, $3, $4, $5, $6) where id=$7`,
+		name, typeOfResource, description, contactTel, contactEmail, head, id)
+	if err == sql.ErrNoRows {
+		return fmt.Errorf("Err insert model")
+	}
+	return
+}
