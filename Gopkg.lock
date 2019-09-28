@@ -4,8 +4,8 @@
 [[projects]]
   name = "github.com/gobuffalo/envy"
   packages = ["."]
-  revision = "043cb4b8af871b49563291e32c66bb84378a60ac"
-  version = "v1.7.0"
+  revision = "909ea676d4c90832fefbf55a5a4fb04d8bef8931"
+  version = "v1.7.1"
 
 [[projects]]
   name = "github.com/gobuffalo/packd"
@@ -16,8 +16,8 @@
 [[projects]]
   name = "github.com/gobuffalo/packr"
   packages = ["."]
-  revision = "9eb7a3d310e89e471c2cdf1ea3ec8d7fc1ab969c"
-  version = "v2.5.2"
+  revision = "b6d537d853119bfd3a31fe49edf53418ce3a00e9"
+  version = "v2.6.0"
 
 [[projects]]
   name = "github.com/gorilla/mux"
@@ -34,8 +34,14 @@
 [[projects]]
   name = "github.com/jackc/pgx"
   packages = [".","chunkreader","internal/sanitize","pgio","pgproto3","pgtype","stdlib"]
-  revision = "a1d6202434aa40c3624688f6c2cacbc27eef5472"
-  version = "v3.5.0"
+  revision = "c73e7d75061bb42b0282945710f344cfe1113d10"
+  version = "v3.6.0"
+
+[[projects]]
+  name = "github.com/jmoiron/sqlx"
+  packages = [".","reflectx"]
+  revision = "d161d7a76b5661016ad0b085869f77fd410f3e6a"
+  version = "v1.2.0"
 
 [[projects]]
   name = "github.com/joho/godotenv"
@@ -70,14 +76,14 @@
 [[projects]]
   name = "github.com/rogpeppe/go-internal"
   packages = ["modfile","module","semver"]
-  revision = "438578804ca6f31be148c27683afc419ce47c06e"
-  version = "v1.3.0"
+  revision = "4bb227c59b1edd467deba87d2149d80915c0bed7"
+  version = "v1.4.0"
 
 [[projects]]
   branch = "master"
   name = "github.com/rubenv/sql-migrate"
   packages = [".","sqlparse"]
-  revision = "87ce952f7079c58e10a2a85835202943ebb9580c"
+  revision = "8926f37f0bc1a432e673c60cedb705f783306da5"
 
 [[projects]]
   name = "github.com/sirupsen/logrus"
@@ -94,20 +100,20 @@
 [[projects]]
   name = "github.com/spf13/pflag"
   packages = ["."]
-  revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
-  version = "v1.0.3"
+  revision = "2e9d26c8c37aae03e3f9d4e90b7116f5accb7cab"
+  version = "v1.0.5"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["pbkdf2"]
-  revision = "4def268fd1a49955bfb3dda92fe3db4f924f2285"
+  revision = "a832865fa7ada6126f4c6124ac49f71be71bff2a"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "fde4db37ae7ad8191b03d30d27f258b5291ae4e3"
+  revision = "c990c680b611ac1aeb7d8f2af94a825f98d69720"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -124,6 +130,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c2b2297c2d830f3a7a71066c4faf62bed92a5219eedb429b3236c20b63f628fd"
+  inputs-digest = "bb9a5795faf81f099f4187273f02ef013886d830d47ecc301fe98357cdf8ccec"
   solver-name = "gps-cdcl"
   solver-version = 1

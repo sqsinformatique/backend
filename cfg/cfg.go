@@ -8,7 +8,7 @@ var DefaultCfg struct {
 	VerboseLevel utils.Level `environment:"VERBOSE_LEVEL,InfoLevel"`
 	Port         string      `environment:"ELEVATOR_PORT,9777"`
 	AppLog       string      `environment:"ELEVATOR_APP_LOG,"`
-	DSN          string      `environment:"ELEVATOR_DSN,postgres://postgres:q2w3e4r@localhost:5433/userdb?sslmode=disable""`
+	DSN          string      `environment:"ELEVATOR_DSN,postgres://postgres_app:postgres_password@2.56.215.111:9432/sqs?sslmode=disable""`
 }
 
 func init() {

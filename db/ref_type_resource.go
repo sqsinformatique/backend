@@ -8,11 +8,11 @@ import (
 )
 
 type RefTypeResourceData struct {
-	ID   int `json:"id"`
-	Name int `json:"name"`
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
-func GetRefTypeResourceByID(id int) (res RefTypeMaintenanceData, err error) {
+func GetRefTypeResourceByID(id int) (res RefTypeResourceData, err error) {
 	err = db.QueryRow(`select * from public.ref_type_resource where id=$1`, id).Scan(&res.ID, &res.Name)
 	return
 }
@@ -35,14 +35,14 @@ func InsertRefTypeResource(name string) (id int, err error) {
 	return
 }
 
-func GetAllRefTypeResource() (res []RefTypeMaintenanceData, err error) {
+func GetAllRefTypeResource() (res []RefTypeResourceData, err error) {
 	rows, err := db.Query(`select * from public.ref_type_resource`)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 	for rows.Next() {
-		p := RefTypeMaintenanceData{}
+		p := RefTypeResourceData{}
 		err := rows.Scan(&p.ID, &p.Name)
 		if err != nil {
 			utils.Error(err)
