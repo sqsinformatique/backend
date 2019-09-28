@@ -13,15 +13,15 @@ import (
 	"github.com/sqsinformatique/backend/db"
 )
 
-func maintenanceGetAllHandler(w http.ResponseWriter, r *http.Request) {
-	maintenance, err := db.GetAllMaintenance()
+func ref_planStatusGetAllHandler(w http.ResponseWriter, r *http.Request) {
+	ref_status, err := db.GetAllRefTypePlanStatus()
 	if err != nil {
 		utils.Errorf("Can't GET. Something wrong with the request body: %s", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	res, err := json.Marshal(maintenance)
+	res, err := json.Marshal(ref_status)
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
@@ -31,8 +31,8 @@ func maintenanceGetAllHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func maintenancePostHandler(w http.ResponseWriter, r *http.Request) {
-	var jPostData db.MaintenanceData
+func ref_planStatusPostHandler(w http.ResponseWriter, r *http.Request) {
+	var jPostData db.RefTypePlanStatusData
 	contents, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		utils.Errorf("Something wrong with the request body: %s", err)
@@ -47,26 +47,21 @@ func maintenancePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	vars := mux.Vars(r)
-	supply_organizations_id, _ := strconv.Atoi(vars["supply_organizations_id"])
-
-	id, err := db.InsertMaintenance(supply_organizations_id, jPostData.Object,
-		jPostData.MaintenanceType, jPostData.MaintenanceStart, jPostData.MaintenanceEnd, jPostData.Checklist,
-		jPostData.ResponsibleWorker, jPostData.Cost, jPostData.Progress)
-	utils.Infoln("Insert InsertMaintenance ID", id)
+	id, err := db.InsertRefTypePlanStatus(jPostData.Name)
+	utils.Infoln("Insert RefTypePlanStatus ID", id)
 	if err != nil {
 		utils.Errorf("Can't INSERT. Something wrong with the request body: %s", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	maintenance, err := db.GetMaintenanceByID(id)
+	ref_status, err := db.GetRefTypePlanStatusByID(id)
 	if err != nil {
 		utils.Errorf("Can't GET. Something wrong with the request body: %s", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	res, err := json.Marshal(maintenance)
+	res, err := json.Marshal(ref_status)
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
@@ -76,18 +71,29 @@ func maintenancePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func maintenanceGetHandler(w http.ResponseWriter, r *http.Request) {
+func ref_planStatusDeleteHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	err := db.DeleteRefTypePlanStatusByID(id)
+	if err != nil {
+		utils.Errorf("Error DeleteRefTypePlanStatusByID: %s", err)
+		w.WriteHeader(http.StatusNotFound)
+	}
+	return
+}
+
+func ref_planStatusGetHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
-	objects, err := db.GetMaintenanceByID(id)
+	ref_status, err := db.GetRefTypePlanStatusByID(id)
 	if err != nil {
-		utils.Errorf("Error GetSupplyOrganizationByID: %s", err)
+		utils.Errorf("Error GetRefTypeResourceByID: %s", err)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	jGetData, err := json.Marshal(objects)
+	jGetData, err := json.Marshal(ref_status)
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
@@ -95,15 +101,4 @@ func maintenanceGetHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)
 	}
-}
-
-func maintenanceDeleteHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"])
-	err := db.DeleteMaintenanceByID(id)
-	if err != nil {
-		utils.Errorf("Error GetSupplyOrganizationByID: %s", err)
-		w.WriteHeader(http.StatusNotFound)
-	}
-	return
 }

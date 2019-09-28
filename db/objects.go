@@ -83,3 +83,20 @@ func GetAllObjectsByType(supplyOrganization int) (res []ObjectsData, err error) 
 	}
 	return
 }
+
+func AddObjectsPartitionsBySupplyOrganization(supplyOrganization int) (err error) {
+	tx, err := db.Begin()
+	if err != nil {
+		return
+	}
+	defer tx.Rollback()
+	_, err = tx.Exec(fmt.Sprintf(`CREATE TABLE objects_%s PARTITION OF objects FOR VALUES IN (%s)`,
+		supplyOrganization,
+		supplyOrganization,
+	))
+	if err != nil {
+		return
+	}
+
+	return tx.Commit()
+}

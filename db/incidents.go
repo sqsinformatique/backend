@@ -58,3 +58,20 @@ func GetAllIncidents() (res []IncidentsData, err error) {
 	}
 	return
 }
+
+func AddIncidentsPartitionsBySupplyOrganization(supplyOrganization int) (err error) {
+	tx, err := db.Begin()
+	if err != nil {
+		return
+	}
+	defer tx.Rollback()
+	_, err = tx.Exec(fmt.Sprintf(`CREATE TABLE incidents_%s PARTITION OF incidents FOR VALUES IN (%s)`,
+		supplyOrganization,
+		supplyOrganization,
+	))
+	if err != nil {
+		return
+	}
+
+	return tx.Commit()
+}

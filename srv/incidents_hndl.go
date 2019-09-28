@@ -79,7 +79,7 @@ func incidentsPostHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	objects, err := db.GetObjectsByID(id)
+	objects, err := db.GetIncidentsByID(id)
 	if err != nil {
 		utils.Errorf("Can't GET. Something wrong with the request body: %s", err)
 		w.WriteHeader(http.StatusBadRequest)

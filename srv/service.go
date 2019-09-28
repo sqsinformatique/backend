@@ -43,6 +43,11 @@ func Start() (err error) {
 
 	ref_type := router.PathPrefix("/api/ref_type").Subrouter()
 
+	ref_type.HandleFunc("/planstatus", ref_planStatusGetAllHandler).Methods("GET")
+	ref_type.HandleFunc("/planstatus", ref_planStatusPostHandler).Methods("POST")
+	ref_type.HandleFunc("/planstatus/{id}", ref_planStatusDeleteHandler).Methods("DELETE")
+	ref_type.HandleFunc("/planstatus/{id}", ref_planStatusGetHandler).Methods("GET")
+
 	ref_type.HandleFunc("/resource", ref_resourceGetAllHandler).Methods("GET")
 	ref_type.HandleFunc("/resource", ref_resourcePostHandler).Methods("POST")
 	ref_type.HandleFunc("/resource/{id}", ref_resourceDeleteHandler).Methods("DELETE")
@@ -67,6 +72,11 @@ func Start() (err error) {
 	router.HandleFunc("/api/supply_organizations", supply_organizationsPostHandler).Methods("POST")
 	router.HandleFunc("/api/supply_organizations/{id}", supply_organizationsDeleteHandler).Methods("DELETE")
 	router.HandleFunc("/api/supply_organizations/{id}", supply_organizationsGetHandler).Methods("GET")
+
+	router.HandleFunc("/api/inventarization", inventarizationGetAllHandler).Methods("GET")
+	router.HandleFunc("/api/inventarization/{supply_organizations_id}", inventarizationPostHandler).Methods("POST")
+	router.HandleFunc("/api/inventarization/{id}", inventarizationDeleteHandler).Methods("DELETE")
+	router.HandleFunc("/api/inventarization/{id}", inventarizationGetHandler).Methods("GET")
 
 	router.HandleFunc("/api/incidents", incidentsGetAllHandler).Methods("GET")
 	router.HandleFunc("/api/incidents/{supply_organizations_id}", incidentsPostHandler).Methods("POST")

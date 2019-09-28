@@ -13,15 +13,15 @@ import (
 	"github.com/sqsinformatique/backend/db"
 )
 
-func maintenanceGetAllHandler(w http.ResponseWriter, r *http.Request) {
-	maintenance, err := db.GetAllMaintenance()
+func inventarizationGetAllHandler(w http.ResponseWriter, r *http.Request) {
+	inventarization, err := db.GetAllInventarization()
 	if err != nil {
 		utils.Errorf("Can't GET. Something wrong with the request body: %s", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	res, err := json.Marshal(maintenance)
+	res, err := json.Marshal(inventarization)
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
@@ -31,8 +31,29 @@ func maintenanceGetAllHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func maintenancePostHandler(w http.ResponseWriter, r *http.Request) {
-	var jPostData db.MaintenanceData
+func inventarizationGetHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	objects, err := db.GetInventarizationByID(id)
+	if err != nil {
+		utils.Errorf("Error GetSupplyOrganizationByID: %s", err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	jGetData, err := json.Marshal(objects)
+	if err != nil {
+		utils.Errorf("Can't marshaled request %s", err)
+	}
+	_, err = w.Write(jGetData)
+	if err != nil {
+		utils.Errorf("Can't send error request %s", err)
+	}
+}
+
+func inventarizationPostHandler(w http.ResponseWriter, r *http.Request) {
+	var jPostData db.InventarizationData
 	contents, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		utils.Errorf("Something wrong with the request body: %s", err)
@@ -50,23 +71,22 @@ func maintenancePostHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	supply_organizations_id, _ := strconv.Atoi(vars["supply_organizations_id"])
 
-	id, err := db.InsertMaintenance(supply_organizations_id, jPostData.Object,
-		jPostData.MaintenanceType, jPostData.MaintenanceStart, jPostData.MaintenanceEnd, jPostData.Checklist,
-		jPostData.ResponsibleWorker, jPostData.Cost, jPostData.Progress)
-	utils.Infoln("Insert InsertMaintenance ID", id)
+	id, err := db.InsertInventarization(jPostData.Object, supply_organizations_id,
+		jPostData.Percent, jPostData.PlanFault, jPostData.Cost, jPostData.PlanStatus)
+	utils.Infoln("Insert InsertInventarization ID", id)
 	if err != nil {
 		utils.Errorf("Can't INSERT. Something wrong with the request body: %s", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	maintenance, err := db.GetMaintenanceByID(id)
+	objects, err := db.GetInventarizationByID(id)
 	if err != nil {
 		utils.Errorf("Can't GET. Something wrong with the request body: %s", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	res, err := json.Marshal(maintenance)
+	res, err := json.Marshal(objects)
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
@@ -76,33 +96,12 @@ func maintenancePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func maintenanceGetHandler(w http.ResponseWriter, r *http.Request) {
+func inventarizationDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
-
-	objects, err := db.GetMaintenanceByID(id)
+	err := db.DeleteInventarizationByID(id)
 	if err != nil {
-		utils.Errorf("Error GetSupplyOrganizationByID: %s", err)
-		w.WriteHeader(http.StatusNotFound)
-		return
-	}
-
-	jGetData, err := json.Marshal(objects)
-	if err != nil {
-		utils.Errorf("Can't marshaled request %s", err)
-	}
-	_, err = w.Write(jGetData)
-	if err != nil {
-		utils.Errorf("Can't send error request %s", err)
-	}
-}
-
-func maintenanceDeleteHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"])
-	err := db.DeleteMaintenanceByID(id)
-	if err != nil {
-		utils.Errorf("Error GetSupplyOrganizationByID: %s", err)
+		utils.Errorf("Error DeleteInventarizationByID: %s", err)
 		w.WriteHeader(http.StatusNotFound)
 	}
 	return

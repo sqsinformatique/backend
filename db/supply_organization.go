@@ -37,6 +37,12 @@ func InsertSupplyOrganization(name string, typeOfResource int, description, cont
 	if err == sql.ErrNoRows {
 		return -1, fmt.Errorf("Err insert model")
 	}
+
+	AddIncidentsPartitionsBySupplyOrganization(id)
+	AddInventarizationPartitionsBySupplyOrganization(id)
+	AddMaintenancePartitionsBySupplyOrganization(id)
+	AddObjectsPartitionsBySupplyOrganization(id)
+
 	return
 }
 
