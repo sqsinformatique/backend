@@ -150,6 +150,14 @@ func RunT(t T, p Params) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// The temp dir returned by ioutil.TempDir might be a sym linked dir (default
+	// behaviour in macOS). That could mess up matching that includes $WORK if,
+	// for example, an external program outputs resolved paths. Evaluating the
+	// dir here will ensure consistency.
+	testTempDir, err = filepath.EvalSymlinks(testTempDir)
+	if err != nil {
+		t.Fatal(err)
+	}
 	refCount := int32(len(files))
 	for _, file := range files {
 		file := file
@@ -166,7 +174,7 @@ func RunT(t T, p Params) {
 				deferred:    func() {},
 			}
 			defer func() {
-				if p.TestWork {
+				if p.TestWork || *testWork {
 					return
 				}
 				removeAll(ts.workdir)
@@ -621,6 +629,27 @@ func (ts *TestScript) MkAbs(file string) string {
 		return file
 	}
 	return filepath.Join(ts.cd, file)
+}
+
+// ReadFile returns the contents of the file with the
+// given name, intepreted relative to the test script's
+// current directory. It interprets "stdout" and "stderr" to
+// mean the standard output or standard error from
+// the most recent exec or wait command respectively.
+//
+// If the file cannot be read, the script fails.
+func (ts *TestScript) ReadFile(file string) string {
+	switch file {
+	case "stdout":
+		return ts.stdout
+	case "stderr":
+		return ts.stderr
+	default:
+		file = ts.MkAbs(file)
+		data, err := ioutil.ReadFile(file)
+		ts.Check(err)
+		return string(data)
+	}
 }
 
 // Setenv sets the value of the environment variable named by the key.

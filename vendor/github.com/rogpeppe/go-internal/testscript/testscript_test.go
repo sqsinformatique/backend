@@ -8,16 +8,30 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"os/signal"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 )
 
 func printArgs() int {
 	fmt.Printf("%q\n", os.Args)
+	return 0
+}
+
+func echo() int {
+	s := strings.Join(os.Args[2:], " ")
+	switch os.Args[1] {
+	case "stdout":
+		fmt.Println(s)
+	case "stderr":
+		fmt.Fprintln(os.Stderr, s)
+	}
 	return 0
 }
 
@@ -44,6 +58,7 @@ func signalCatcher() int {
 func TestMain(m *testing.M) {
 	os.Exit(RunMain(m, map[string]func() int{
 		"printargs":     printArgs,
+		"echo":          echo,
 		"status":        exitWithStatus,
 		"signalcatcher": signalCatcher,
 	}))
@@ -98,6 +113,16 @@ func TestScripts(t *testing.T) {
 					ts.Fatalf("test-values did not see expected value")
 				}
 			},
+			"testreadfile": func(ts *TestScript, neg bool, args []string) {
+				if len(args) != 1 {
+					ts.Fatalf("testreadfile <filename>")
+				}
+				got := ts.ReadFile(args[0])
+				want := args[0] + "\n"
+				if got != want {
+					ts.Fatalf("reading %q; got %q want %q", args[0], got, want)
+				}
+			},
 		},
 		Setup: func(env *Env) error {
 			infos, err := ioutil.ReadDir(env.WorkDir)
@@ -109,6 +134,9 @@ func TestScripts(t *testing.T) {
 				setupFilenames = append(setupFilenames, info.Name())
 			}
 			env.Values["somekey"] = 1234
+			env.Vars = append(env.Vars,
+				"GONOSUMDB=*",
+			)
 			return nil
 		},
 	})
@@ -116,6 +144,32 @@ func TestScripts(t *testing.T) {
 		t.Fatalf("defer mismatch; got %d want 0", testDeferCount)
 	}
 	// TODO check that the temp directory has been removed.
+}
+
+// TestTestwork tests that using the flag -testwork will make sure the work dir isn't removed
+// after the test is done. It uses an empty testscript file that doesn't do anything.
+func TestTestwork(t *testing.T) {
+	out, err := exec.Command("go", "test", ".", "-testwork", "-v", "-run", "TestScripts/^nothing$").CombinedOutput()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	re := regexp.MustCompile(`\s+WORK=(\S+)`)
+	match := re.FindAllStringSubmatch(string(out), -1)
+
+	// Ensure that there is only one line with one match
+	if len(match) != 1 || len(match[0]) != 2 {
+		t.Fatalf("failed to extract WORK directory")
+	}
+
+	var fi os.FileInfo
+	if fi, err = os.Stat(match[0][1]); err != nil {
+		t.Fatalf("failed to stat expected work directory %v: %v", match[0][1], err)
+	}
+
+	if !fi.IsDir() {
+		t.Fatalf("expected persisted workdir is not a directory: %v", match[0][1])
+	}
 }
 
 func setSpecialVal(ts *TestScript, neg bool, args []string) {
