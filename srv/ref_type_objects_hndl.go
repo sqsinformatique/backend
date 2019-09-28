@@ -47,7 +47,7 @@ func ref_objectsPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := db.InsertRefTypeObjects(jPostData.Name)
+	id, err := db.InsertRefTypeObjects(jPostData.Resource, jPostData.Name, jPostData.Characteristics)
 	utils.Infoln("Insert RefTypeObjects ID", id)
 	if err != nil {
 		utils.Errorf("Can't INSERT. Something wrong with the request body: %s", err)
