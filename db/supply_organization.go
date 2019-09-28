@@ -23,7 +23,7 @@ func GetSupplyOrganizationByID(id int) (res SupplyOrganizationData, err error) {
 	return
 }
 
-func DeleteRefTypeOrganizationByID(id int) (err error) {
+func DeleteSupplyOrganizationByID(id int) (err error) {
 	_, err = rollbackQuery(`delete from public.supply_organization where id=$1`, id)
 	if err != nil {
 		return err

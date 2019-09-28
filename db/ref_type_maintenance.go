@@ -26,12 +26,11 @@ func DeleteRefTypeMaintenanceByID(id int) (err error) {
 }
 
 func InsertRefTypeMaintenance(name string) (id int, err error) {
-	rows, err := rollbackQuery(`insert into public.ref_type_maintenance (name) values ($1) returning id`,
-		name)
-	if rows.Scan(&id) == sql.ErrNoRows {
+	err = db.QueryRow(`insert into public.ref_type_maintenance (name) values ($1) returning id`,
+		name).Scan(&id)
+	if err == sql.ErrNoRows {
 		return -1, fmt.Errorf("Err insert model")
 	}
-	rows.Scan(&id)
 	return
 }
 

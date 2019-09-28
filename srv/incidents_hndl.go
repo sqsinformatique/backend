@@ -13,15 +13,15 @@ import (
 	"github.com/sqsinformatique/backend/db"
 )
 
-func supply_organizationsGetAllHandler(w http.ResponseWriter, r *http.Request) {
-	supply_organizations, err := db.GetAllSupplyOrganization()
+func incidentsGetAllHandler(w http.ResponseWriter, r *http.Request) {
+	incidents, err := db.GetAllIncidents()
 	if err != nil {
 		utils.Errorf("Can't GET. Something wrong with the request body: %s", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	res, err := json.Marshal(supply_organizations)
+	res, err := json.Marshal(incidents)
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
@@ -31,18 +31,18 @@ func supply_organizationsGetAllHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func supply_organizationsGetHandler(w http.ResponseWriter, r *http.Request) {
+func incidentsGetHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
-	supply_organizations, err := db.GetSupplyOrganizationByID(id)
+	objects, err := db.GetIncidentsByID(id)
 	if err != nil {
 		utils.Errorf("Error GetSupplyOrganizationByID: %s", err)
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	jGetData, err := json.Marshal(supply_organizations)
+	jGetData, err := json.Marshal(objects)
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
@@ -52,8 +52,8 @@ func supply_organizationsGetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func supply_organizationsPostHandler(w http.ResponseWriter, r *http.Request) {
-	var jPostData db.SupplyOrganizationData
+func incidentsPostHandler(w http.ResponseWriter, r *http.Request) {
+	var jPostData db.IncidentsData
 	contents, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		utils.Errorf("Something wrong with the request body: %s", err)
@@ -68,22 +68,25 @@ func supply_organizationsPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := db.InsertSupplyOrganization(jPostData.Name, jPostData.TypeOfResource,
-		jPostData.Description, jPostData.ContactTel, jPostData.ContactEmail, jPostData.Head)
-	utils.Infoln("Insert SupplyOrganization ID", id)
+	vars := mux.Vars(r)
+	supply_organizations_id, _ := strconv.Atoi(vars["supply_organizations_id"])
+
+	id, err := db.InsertIncidents(supply_organizations_id, jPostData.Object,
+		jPostData.Date, jPostData.Results, jPostData.ResponsibleWorker)
+	utils.Infoln("Insert InsertObjects ID", id)
 	if err != nil {
 		utils.Errorf("Can't INSERT. Something wrong with the request body: %s", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	supply_organization, err := db.GetSupplyOrganizationByID(id)
+	objects, err := db.GetObjectsByID(id)
 	if err != nil {
 		utils.Errorf("Can't GET. Something wrong with the request body: %s", err)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	res, err := json.Marshal(supply_organization)
+	res, err := json.Marshal(objects)
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
@@ -93,12 +96,12 @@ func supply_organizationsPostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func supply_organizationsDeleteHandler(w http.ResponseWriter, r *http.Request) {
+func incidentsDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
-	err := db.DeleteSupplyOrganizationByID(id)
+	err := db.DeleteIncidentsByID(id)
 	if err != nil {
-		utils.Errorf("Error DeleteRefTypeResourceByID: %s", err)
+		utils.Errorf("Error DeleteIncidentsByID: %s", err)
 		w.WriteHeader(http.StatusNotFound)
 	}
 	return

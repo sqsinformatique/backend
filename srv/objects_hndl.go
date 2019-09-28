@@ -107,3 +107,35 @@ func objectsPostHandler(w http.ResponseWriter, r *http.Request) {
 		utils.Errorf("Can't send error request %s", err)
 	}
 }
+
+func objectsGetHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+
+	objects, err := db.GetObjectsByID(id)
+	if err != nil {
+		utils.Errorf("Error GetSupplyOrganizationByID: %s", err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	jGetData, err := json.Marshal(objects)
+	if err != nil {
+		utils.Errorf("Can't marshaled request %s", err)
+	}
+	_, err = w.Write(jGetData)
+	if err != nil {
+		utils.Errorf("Can't send error request %s", err)
+	}
+}
+
+func objectsDeleteHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, _ := strconv.Atoi(vars["id"])
+	err := db.DeleteObjectsByID(id)
+	if err != nil {
+		utils.Errorf("Error GetSupplyOrganizationByID: %s", err)
+		w.WriteHeader(http.StatusNotFound)
+	}
+	return
+}
