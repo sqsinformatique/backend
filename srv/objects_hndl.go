@@ -57,6 +57,7 @@ func objectsGetAllHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(res)
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)
@@ -102,6 +103,7 @@ func objectsPostHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(res)
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)
@@ -123,6 +125,7 @@ func objectsGetHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(jGetData)
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)
@@ -179,6 +182,7 @@ func objectsPutHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(res)
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)

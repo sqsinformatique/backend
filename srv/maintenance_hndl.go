@@ -25,6 +25,7 @@ func maintenanceGetAllHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(res)
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)
@@ -48,11 +49,11 @@ func maintenancePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	vars := mux.Vars(r)
-	supply_organizations_id, _ := strconv.Atoi(vars["supply_organizations_id"])
+	supply_organizations_id, _ := strconv.Atoi(vars["id"])
 
 	id, err := db.InsertMaintenance(supply_organizations_id, jPostData.Object,
 		jPostData.MaintenanceType, jPostData.MaintenanceStart, jPostData.MaintenanceEnd, jPostData.Checklist,
-		jPostData.ResponsibleWorker, jPostData.Cost, jPostData.Progress)
+		jPostData.ResponsibleWorker)
 	utils.Infoln("Insert InsertMaintenance ID", id)
 	if err != nil {
 		utils.Errorf("Can't INSERT. Something wrong with the request body: %s", err)
@@ -70,6 +71,7 @@ func maintenancePostHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(res)
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)
@@ -91,6 +93,7 @@ func maintenanceGetHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(jGetData)
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)

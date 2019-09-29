@@ -13,13 +13,14 @@ type IncidentsData struct {
 	SupplyOrganization int       `json:"supply_organization"`
 	Object             int       `json:"object"`
 	Date               time.Time `json:"date"`
-	Results            string    `json:"results"`
+	Event              string    `json:"event"`
 	ResponsibleWorker  string    `json:"responsible_worker"`
+	Status             string    `json:"status"`
 }
 
 func GetIncidentsByID(id int) (res IncidentsData, err error) {
 	err = db.QueryRow(`select * from public.incidents where id=$1`, id).Scan(&res.ID, &res.SupplyOrganization,
-		&res.Object, &res.Date, &res.Results, &res.ResponsibleWorker)
+		&res.Object, &res.Date, &res.Event, &res.ResponsibleWorker, &res.Status)
 	return
 }
 
@@ -31,9 +32,9 @@ func DeleteIncidentsByID(id int) (err error) {
 	return
 }
 
-func InsertIncidents(supply_organization, object int, date time.Time, results, responsibleWorker string) (id int, err error) {
-	err = db.QueryRow(`insert into public.incidents (supply_organization, object, date, results, responsible_worker) values ($1, $2, $3, $4, $5) returning id`,
-		supply_organization, object, date, results, responsibleWorker).Scan(&id)
+func InsertIncidents(supply_organization, object int, date time.Time, results, responsibleWorker, status string) (id int, err error) {
+	err = db.QueryRow(`insert into public.incidents (supply_organization, object, date, event, responsible_worker, status) values ($1, $2, $3, $4, $5, $6) returning id`,
+		supply_organization, object, date, results, responsibleWorker, status).Scan(&id)
 	if err == sql.ErrNoRows {
 		return -1, fmt.Errorf("Err insert model")
 	}
@@ -49,7 +50,7 @@ func GetAllIncidents() (res []IncidentsData, err error) {
 	for rows.Next() {
 		p := IncidentsData{}
 		err := rows.Scan(&p.ID, &p.SupplyOrganization,
-			&p.Object, &p.Date, &p.Results, &p.ResponsibleWorker)
+			&p.Object, &p.Date, &p.Event, &p.ResponsibleWorker, &p.Status)
 		if err != nil {
 			utils.Error(err)
 			continue
@@ -76,9 +77,9 @@ func AddIncidentsPartitionsBySupplyOrganization(supplyOrganization int) (err err
 	return tx.Commit()
 }
 
-func UpdateIncidents(id, supply_organization, object int, date time.Time, results, responsibleWorker string) (err error) {
-	_, err = rollbackQuery(`insert into public.incidents (supply_organization, object, date, results, responsible_worker) values ($1, $2, $3, $4, $5) where id=$6`,
-		supply_organization, object, date, results, responsibleWorker, id)
+func UpdateIncidents(id, supply_organization, object int, date time.Time, results, responsibleWorker, status string) (err error) {
+	_, err = rollbackQuery(`insert into public.incidents (supply_organization, object, date, event, responsible_worker, status) values ($1, $2, $3, $4, $5, $6) where id=$7`,
+		supply_organization, object, date, results, responsibleWorker, status, id)
 	if err == sql.ErrNoRows {
 		return fmt.Errorf("Err insert model")
 	}

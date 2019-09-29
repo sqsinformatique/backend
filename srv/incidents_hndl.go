@@ -25,6 +25,7 @@ func incidentsGetAllHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(res)
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)
@@ -46,6 +47,7 @@ func incidentsGetHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(jGetData)
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)
@@ -72,7 +74,7 @@ func incidentsPostHandler(w http.ResponseWriter, r *http.Request) {
 	supply_organizations_id, _ := strconv.Atoi(vars["supply_organizations_id"])
 
 	id, err := db.InsertIncidents(supply_organizations_id, jPostData.Object,
-		jPostData.Date, jPostData.Results, jPostData.ResponsibleWorker)
+		jPostData.Date, jPostData.Event, jPostData.ResponsibleWorker, jPostData.Status)
 	utils.Infoln("Insert InsertObjects ID", id)
 	if err != nil {
 		utils.Errorf("Can't INSERT. Something wrong with the request body: %s", err)
@@ -90,6 +92,7 @@ func incidentsPostHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(res)
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)
@@ -127,7 +130,7 @@ func incidentsPutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = db.UpdateIncidents(id, jPostData.SupplyOrganization, jPostData.Object,
-		jPostData.Date, jPostData.Results, jPostData.ResponsibleWorker)
+		jPostData.Date, jPostData.Event, jPostData.ResponsibleWorker, jPostData.Status)
 	utils.Infoln("Insert InsertObjects ID", id)
 	if err != nil {
 		utils.Errorf("Can't UPDATE. Something wrong with the request body: %s", err)
@@ -145,6 +148,7 @@ func incidentsPutHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(res)
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)
