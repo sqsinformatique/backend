@@ -25,6 +25,7 @@ func ref_maintenanceGetAllHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(res)
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)
@@ -65,6 +66,7 @@ func ref_maintenancePostHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(res)
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)
@@ -97,6 +99,7 @@ func ref_maintenanceGetHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.Errorf("Can't marshaled request %s", err)
 	}
+	w.Header().Set("Content-Type", "application/json")
 	_, err = w.Write(jGetData)
 	if err != nil {
 		utils.Errorf("Can't send error request %s", err)
